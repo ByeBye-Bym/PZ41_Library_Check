@@ -14,7 +14,19 @@ const catalog = {
 // TODO 1. Верните новый Promise. Внутри setTimeout (900 мс)
 // проверьте catalog[code].available: если true — resolve(book.title),
 // иначе — reject(new Error("Книга временно недоступна")) .
-function checkAvailability(code) {}
+function checkAvailability(code) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const book = catalog[code];
+
+      if (book && book.available === true) {
+        resolve(book.title);
+      } else {
+        reject(new Error("Книга временно недоступна"));
+      }
+    }, 900);
+  });
+}
 
 checkButton.addEventListener("click", () => {
   checkButton.disabled = true;
@@ -26,4 +38,18 @@ checkButton.addEventListener("click", () => {
   // TODO 3. В .then() выведите сообщение об успехе в result.
   // TODO 4. В .catch() покажите error.message и оформите ошибку.
   // TODO 5. В .finally() снова включите кнопку.
+  checkAvailability(bookSelect.value)
+    .then((title) => {
+      result.textContent = "Книга доступна: " + title;
+      status.className = "status status--success";
+      status.textContent = "Можно бронировать.";
+    })
+    .catch((error) => {
+      result.textContent = error.message;
+      status.className = "status status--error";
+      status.textContent = "Проверка не удалась.";
+    })
+    .finally(() => {
+      checkButton.disabled = false;
+    });
 });
